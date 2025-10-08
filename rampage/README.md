@@ -1,6 +1,6 @@
 # Rampage Backend
 
-## Prerequisite
+## Prerequisites
 
 - [Go 1.24 or later](https://go.dev/doc/install)
 - Docker and Kubernetes (for running with Tilt)
