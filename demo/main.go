@@ -14,7 +14,7 @@ func main() {
 	if err != nil {
 		panic(err.Error())
 	}
-	//s
+
 	cardinal.RegisterSystem(world, system.PlayerSetUpdater, cardinal.WithHook(cardinal.PreUpdate))
 	cardinal.RegisterSystem(world, system.PlayerSpawnSystem)
 	cardinal.RegisterSystem(world, system.MovePlayerSystem)
