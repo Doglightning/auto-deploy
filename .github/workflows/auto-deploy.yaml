@@ -33,32 +33,33 @@ jobs:
           script: |
             const name = "World Forge Auto-Deploy";
             const owner = context.repo.owner, repo = context.repo.repo, ref = context.sha;
-            const initDeadline = Date.now() + 2*60*1000;   // 2m to see the check appear
-            const hardDeadline = Date.now() + 45*60*1000;  // 45m max runtime
-
+            const initDeadline = Date.now() + 2*60*1000;
+            const hardDeadline = Date.now() + 45*60*1000;
             const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-            // Phase 1: wait for the check to appear
-            while (Date.now() < initDeadline) {
-              const { data } = await github.rest.checks.listForRef({ owner, repo, ref });
-              const run = data.check_runs.find(c => c.name === name);
-              if (run) break;
-              await sleep(5000);
-            }
-            // If the check never appeared, fail early
-            {
-              const { data } = await github.rest.checks.listForRef({ owner, repo, ref });
-              const run = data.check_runs.find(c => c.name === name);
-              if (!run) {
-                core.setFailed("Auto-deploy app did not initialize (no check run created).");
-                return;
-              }
+            async function getRun() {
+              const { data } = await github.rest.checks.listForRef({
+              owner, repo, ref, check_name: name, filter: "latest", per_page: 100
+              });
+              // Debug: see what exists
+              core.info(JSON.stringify(data.check_runs.map(c => ({
+                id: c.id, name: c.name, head_sha: c.head_sha, status: c.status, conclusion: c.conclusion, app: c.app?.slug
+              })), null, 2));
+              return data.check_runs.find(c => c.name === name && c.head_sha === ref);
             }
 
-            // Phase 2: wait for completion
+            while (Date.now() < initDeadline) {
+              if (await getRun()) break;
+              await sleep(5000);
+            }
+            const initial = await getRun();
+            if (!initial) {
+              core.setFailed("Auto-deploy app did not initialize (no matching check run for this SHA).");
+              return;
+            }
+
             while (Date.now() < hardDeadline) {
-              const { data } = await github.rest.checks.listForRef({ owner, repo, ref });
-              const run = data.check_runs.find(c => c.name === name);
+              const run = await getRun();
               if (run?.status === "completed") {
                 if (run.conclusion !== "success") core.setFailed(run.output?.summary || "Auto-deploy failed");
                 return;
@@ -66,5 +67,3 @@ jobs:
               await sleep(10000);
             }
             core.setFailed("Timed out waiting for auto-deploy result.");
-            
-            
