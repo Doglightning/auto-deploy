@@ -1,9 +1,8 @@
 package main
 
 import (
-	"demo/system"
-
 	"github.com/argus-labs/monorepo/pkg/cardinal"
+	"demo/system"
 )
 
 func main() {
