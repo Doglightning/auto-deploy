@@ -6,7 +6,7 @@ on:
 
 permissions:
   contents: write
-  checks: read
+  statuses: read
 
 jobs:
   signal:
@@ -27,43 +27,49 @@ jobs:
                 repo: `${context.repo.owner}/${context.repo.repo}`
               }
             })
-      - name: Wait for World Forge check run
+      - name: Wait for World Forge status
         uses: actions/github-script@v7
         with:
           script: |
-            const name = "World Forge Auto-Deploy";
+            const contextName = "world-forge/auto-deploy";
             const owner = context.repo.owner, repo = context.repo.repo, ref = context.sha;
-            const initDeadline = Date.now() + 2*60*1000;
-            const hardDeadline = Date.now() + 45*60*1000;
+            const initDeadline = Date.now() + 30*1000;   // 2m to see the status appear
+            const hardDeadline = Date.now() + 45*60*1000;  // 45m max runtime
+
             const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
-            async function getRun() {
-              const { data } = await github.rest.checks.listForRef({
-              owner, repo, ref, check_name: name, filter: "latest", per_page: 100
-              });
-              // Debug: see what exists
-              core.info(JSON.stringify(data.check_runs.map(c => ({
-                id: c.id, name: c.name, head_sha: c.head_sha, status: c.status, conclusion: c.conclusion, app: c.app?.slug
-              })), null, 2));
-              return data.check_runs.find(c => c.name === name && c.head_sha === ref);
+            async function getStatus() {
+              const { data } = await github.rest.repos.getCombinedStatusForRef({ owner, repo, ref });
+              const s = data.statuses.find(s => s.context === contextName);
+              if (s) core.info(`status=${s.state} desc=${s.description}`);
+              return s;
             }
 
+            // Phase 1: wait for the status to appear
             while (Date.now() < initDeadline) {
-              if (await getRun()) break;
+              const s = await getStatus();
+              if (s) break;
               await sleep(5000);
             }
-            const initial = await getRun();
-            if (!initial) {
-              core.setFailed("Auto-deploy app did not initialize (no matching check run for this SHA).");
-              return;
+            // If the status never appeared, fail early
+            {
+              const s = await getStatus();
+              if (!s) {
+                core.setFailed("Auto-deploy app did not initialize (no commit status).");
+                return;
+              }
             }
 
+            // Phase 2: wait for completion
             while (Date.now() < hardDeadline) {
-              const run = await getRun();
-              if (run?.status === "completed") {
-                if (run.conclusion !== "success") core.setFailed(run.output?.summary || "Auto-deploy failed");
+              const s = await getStatus();
+              if (s?.state === "success") return;
+              if (s?.state === "failure" || s?.state === "error") {
+                core.setFailed(s.description || "Auto-deploy failed");
                 return;
               }
               await sleep(10000);
             }
             core.setFailed("Timed out waiting for auto-deploy result.");
+            
+            
