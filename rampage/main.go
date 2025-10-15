@@ -1,10 +1,12 @@
 package main
 
 import (
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"rampage/system"
+
+	"github.com/argus-labs/monorepo/pkg/cardinal"
 )
 
+// change
 func main() {
 	world, err := cardinal.NewWorld(cardinal.WorldOptions{
 		TickRate:       1,
