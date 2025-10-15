@@ -47,11 +47,19 @@ jobs:
             let expected = null;
             while (Date.now() < initDeadline) {
               const statuses = await allStatuses();
-              const agg = statuses.find(s => s.context === prefix);
-              if (agg && agg.state === "pending") {
-                const n = parseInt(agg.description || "0", 10);
+              // Bail early if aggregate context already reports failure
+              const aggFail = statuses.find(s => s.context === prefix && (s.state === "failure" || s.state === "error"));
+              if (aggFail) {
+                core.setFailed(aggFail.description || "Auto-deploy aggregate failed");
+                return;
+              }
+              // Look for any pending aggregate with a numeric description
+              const aggs = statuses.filter(s => s.context === prefix && s.state === "pending");
+              for (const a of aggs) {
+                const n = parseInt(a.description || "0", 10);
                 if (!Number.isNaN(n) && n > 0) { expected = n; break; }
               }
+              if (expected) break;
               await sleep(5000);
             }
             if (!expected) {
