@@ -58,6 +58,7 @@ jobs:
               core.setFailed("Auto-deploy did not publish expected deployment count.");
               return;
             }
+            core.info(`${expected} deploy${expected === 1 ? '' : 's'} ${expected === 1 ? 'is' : 'are'} in progress`);
 
             // Phase 2: wait for per-project contexts to complete
             while (Date.now() < hardDeadline) {
