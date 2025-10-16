@@ -6,6 +6,7 @@ import (
 	"github.com/argus-labs/monorepo/pkg/cardinal"
 )
 
+// sad
 func main() {
 	world, err := cardinal.NewWorld(cardinal.WorldOptions{
 		TickRate:       1,
