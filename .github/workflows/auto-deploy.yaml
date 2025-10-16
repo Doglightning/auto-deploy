@@ -14,4 +14,4 @@ jobs:
     secrets: inherit
     with:
       base: ${{ github.event.before }}
-      head: ${{ github.sha }}
+      head: ${{ github.sha }} #s
