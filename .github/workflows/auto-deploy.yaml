@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   auto-deploy:
-    uses: Doglightning/testdeploystuff/.github/workflows/auto_deploy.yml@main
+    uses: Doglightning/testdeploystuff/.github/workflows/auto_deploy.yml@v1
     secrets: inherit
     with:
       base: ${{ github.event.before }}
