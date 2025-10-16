@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   auto-deploy:
-    uses: Argus-Labs/world-cli/.github/workflows/auto_deploy.yml@main
+    uses: Doglightning/testdeploystuff/.github/workflows/auto_deploy.yml@main
     secrets: inherit
     with:
       base: ${{ github.event.before }}
