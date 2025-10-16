@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   auto-deploy:
-    uses: Argus-Labs/world-cli/workflows/auto_deploy.yaml@v1
+    uses: Argus-Labs/world-cli/.github/workflows/auto_deploy.yaml@v1
     secrets: inherit
     with:
       base: ${{ github.event.before }}
