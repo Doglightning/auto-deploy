@@ -3,9 +3,10 @@ package system
 import (
 	"time"
 
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"demo/component"
 	"demo/event"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type OnlineStatusUpdaterState struct {

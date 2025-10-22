@@ -3,8 +3,9 @@ package system
 import (
 	"sync"
 
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"demo/component"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type PlayerSearch = cardinal.Exact[struct {

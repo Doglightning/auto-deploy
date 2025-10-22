@@ -3,9 +3,10 @@ package system
 import (
 	"time"
 
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"demo/component"
 	"demo/event"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type PlayerSpawnCommand struct {
@@ -32,23 +33,23 @@ func PlayerSpawnSystem(state *SpawnPlayerSystemState) error {
 		// Regardless of whether the player exists or not, we emit a spawn event
 		// Because the act of spawning is also creating (if they don’t already exist)
 		state.PlayerSpawnEvent.Emit(event.PlayerSpawn{
-			ArgusAuthID:   msg.ArgusAuthID,
-			ArgusAuthName: msg.ArgusAuthName,
-			X:             msg.X,
-			Y:             msg.Y,
+			ArgusAuthID:   msg.Payload().ArgusAuthID,
+			ArgusAuthName: msg.Payload().ArgusAuthName,
+			X:             msg.Payload().X,
+			Y:             msg.Payload().Y,
 		})
 
-		if playerSet.Exists(msg.ArgusAuthID) {
-			state.Logger().Info().Msgf("Player with ID %s already exists, skipping creation", msg.ArgusAuthID)
+		if playerSet.Exists(msg.Payload().ArgusAuthID) {
+			state.Logger().Info().Msgf("Player with ID %s already exists, skipping creation", msg.Payload().ArgusAuthID)
 			continue
 		}
 
 		id, err := state.Players.Create(
-			component.PlayerTag{ArgusAuthID: msg.ArgusAuthID, ArgusAuthName: msg.ArgusAuthName},
-			component.Position{X: int(msg.X), Y: int(msg.Y)},
+			component.PlayerTag{ArgusAuthID: msg.Payload().ArgusAuthID, ArgusAuthName: msg.Payload().ArgusAuthName},
+			component.Position{X: int(msg.Payload().X), Y: int(msg.Payload().Y)},
 			component.OnlineStatus{Online: true, LastActive: time.Now()},
 		)
-		playerSet.Add(msg.ArgusAuthID)
+		playerSet.Add(msg.Payload().ArgusAuthID)
 
 		if err != nil {
 			// If we return the error, Cardinal will shutdown, so just log it.
@@ -58,7 +59,7 @@ func PlayerSpawnSystem(state *SpawnPlayerSystemState) error {
 
 		state.Logger().Info().
 			Uint32("entity", uint32(id)).
-			Msgf("Created player %s (id: %s)", msg.ArgusAuthName, msg.ArgusAuthID)
+			Msgf("Created player %s (id: %s)", msg.Payload().ArgusAuthName, msg.Payload().ArgusAuthID)
 	}
 	return nil
 }

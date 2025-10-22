@@ -1,7 +1,7 @@
 package system
 
 import (
-	"github.com/argus-labs/monorepo/pkg/cardinal"
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type PlayerSetUpdaterState struct {

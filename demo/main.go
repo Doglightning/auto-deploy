@@ -3,7 +3,7 @@ package main
 import (
 	"demo/system"
 
-	"github.com/argus-labs/monorepo/pkg/cardinal"
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 // mms

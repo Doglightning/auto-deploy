@@ -1,8 +1,9 @@
 package system
 
 import (
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"demo/event"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type PlayerLeaveCommand struct {
@@ -30,16 +31,16 @@ func PlayerLeaveSystem(state *PlayerLeaveSystemState) error {
 	}
 
 	for msg := range state.PlayerLeaveCommands.Iter() {
-		entity, exists := players[msg.ArgusAuthID]
+		entity, exists := players[msg.Payload().ArgusAuthID]
 		if !exists {
-			state.Logger().Info().Msgf("Player with ID %s not found", msg.ArgusAuthID)
+			state.Logger().Info().Msgf("Player with ID %s not found", msg.Payload().ArgusAuthID)
 			continue
 		}
 
 		entity.Destroy()
 
 		state.PlayerDepartureEvent.Emit(event.PlayerDeparture{
-			ArgusAuthID: msg.ArgusAuthID,
+			ArgusAuthID: msg.Payload().ArgusAuthID,
 		})
 	}
 	return nil

@@ -3,9 +3,10 @@ package system
 import (
 	"time"
 
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"demo/component"
 	"demo/event"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type MovePlayerCommand struct {
@@ -32,7 +33,7 @@ func MovePlayerSystem(state *MovePlayerSystemState) error {
 		for entity, player := range state.Players.Iter() {
 			tag := player.Tag.Get()
 
-			if msg.ArgusAuthID != tag.ArgusAuthID {
+			if msg.Payload().ArgusAuthID != tag.ArgusAuthID {
 				continue
 			}
 
@@ -42,25 +43,25 @@ func MovePlayerSystem(state *MovePlayerSystemState) error {
 				state.PlayerSpawnEvent.Emit(event.PlayerSpawn{
 					ArgusAuthID:   tag.ArgusAuthID,
 					ArgusAuthName: tag.ArgusAuthName,
-					X:             msg.X,
-					Y:             msg.Y,
+					X:             msg.Payload().X,
+					Y:             msg.Payload().Y,
 				})
 			}
 
-			player.Position.Set(component.Position{X: int(msg.X), Y: int(msg.Y)})
+			player.Position.Set(component.Position{X: int(msg.Payload().X), Y: int(msg.Payload().Y)})
 			player.Online.Set(component.OnlineStatus{Online: true, LastActive: time.Now()})
 
 			state.PlayerMovementEvent.Emit(event.PlayerMovement{
 				ArgusAuthID: tag.ArgusAuthID,
-				X:           msg.X,
-				Y:           msg.Y,
+				X:           msg.Payload().X,
+				Y:           msg.Payload().Y,
 			})
 
 			name := tag.ArgusAuthName
 
 			state.Logger().Info().
 				Uint32("entity", uint32(entity.ID)).
-				Msgf("Player %s (id: %s) moved to %d, %d", name, tag.ArgusAuthID, msg.X, msg.Y)
+				Msgf("Player %s (id: %s) moved to %d, %d", name, tag.ArgusAuthID, msg.Payload().X, msg.Payload().Y)
 		}
 	}
 	return nil
