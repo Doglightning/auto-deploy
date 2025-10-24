@@ -1,0 +1,17 @@
+organization = "argus"   # The user's forge organization
+project = "demo_setup"   # The project name
+
+
+[[shards]]
+id = "basic"
+log_level = "info"       # Optional: default info
+enable_otel = false      # Optional: default false
+path = "./" # Optional path override
+
+[gateway]
+log_level = "info"       # Optional: default info
+enable_otel = false      # Optional: default false
+
+[registry]
+log_level = "info"       # Optional: default info
+enable_otel = false      # Optional: default false
