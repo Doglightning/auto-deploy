@@ -1,8 +1,9 @@
 package system
 
 import (
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	otherworld "rampage/other_world"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 // ExternalCommand should originate from another game shard.
@@ -34,7 +35,7 @@ func CallExternalSystem(state *CallExternalSystemState) error {
 		state.Logger().Info().Msg("Received call-external message")
 
 		otherworld.Matchmaking.Send(&state.BaseSystemState, CreatePlayerCommand{
-			Nickname: msg.Message,
+			Nickname: msg.Payload().Message,
 		})
 	}
 	return nil

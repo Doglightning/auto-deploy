@@ -1,9 +1,10 @@
 package system
 
 import (
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"rampage/component"
 	systemevent "rampage/system_event"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type GraveyardSystemState struct {

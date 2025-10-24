@@ -1,6 +1,8 @@
-module rampage
+module demo_setup
 
-go 1.24.1
+go 1.24.0
+
+toolchain go1.24.1
 
 require github.com/argus-labs/world-engine v1.0.1-0.20251021072632-df4541db1ca3
 
@@ -27,8 +29,8 @@ require (
 	github.com/kelindar/simd v1.1.2 // indirect
 	github.com/klauspost/compress v1.18.0 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
-	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.20 // indirect
+	github.com/mattn/go-colorable v0.1.13 // indirect
+	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/nats-io/nats.go v1.47.0 // indirect
 	github.com/nats-io/nkeys v0.4.11 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect

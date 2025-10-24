@@ -1,10 +1,11 @@
 package system
 
 import (
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"rampage/component"
 	"rampage/event"
 	systemevent "rampage/system_event"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type AttackPlayerCommand struct {
@@ -30,17 +31,17 @@ func AttackPlayerSystem(state *AttackPlayerSystemState) error {
 		for entity, player := range state.Players.Iter() {
 			tag := player.Tag.Get()
 
-			if msg.Target != tag.Nickname {
+			if msg.Payload().Target != tag.Nickname {
 				continue
 			}
 
-			newHealth := player.Health.Get().HP - int(msg.Damage)
+			newHealth := player.Health.Get().HP - int(msg.Payload().Damage)
 			if newHealth > 0 {
 				player.Health.Set(component.Health{HP: newHealth})
 
 				state.Logger().Info().
 					Uint32("entity", uint32(entity.ID)).
-					Msgf("Player %s received %d damage", msg.Target, msg.Damage)
+					Msgf("Player %s received %d damage", msg.Payload().Target, msg.Payload().Damage)
 			} else {
 				entity.Destroy()
 
@@ -48,7 +49,7 @@ func AttackPlayerSystem(state *AttackPlayerSystemState) error {
 
 				state.PlayerDeathSystemEvents.Emit(systemevent.PlayerDeath{Nickname: tag.Nickname})
 
-				state.Logger().Info().Uint32("entity", uint32(entity.ID)).Msgf("Player %s died", msg.Target)
+				state.Logger().Info().Uint32("entity", uint32(entity.ID)).Msgf("Player %s died", msg.Payload().Target)
 			}
 		}
 	}

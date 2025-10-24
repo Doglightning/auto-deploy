@@ -1,6 +1,6 @@
 package event
 
-import "github.com/argus-labs/monorepo/pkg/cardinal"
+import "github.com/argus-labs/world-engine/pkg/cardinal"
 
 type PlayerDeath struct {
 	cardinal.BaseEvent

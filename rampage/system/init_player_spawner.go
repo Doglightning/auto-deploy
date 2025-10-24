@@ -3,8 +3,9 @@ package system
 import (
 	"fmt"
 
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"rampage/component"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type PlayerSpawnerSystemState struct {

@@ -1,0 +1,19 @@
+organization = "argus"   # The user's forge organization
+project = "demo_setup"   # The project name
+
+[[shards]]
+id = "game"              # The shard ID injected into the container
+
+[[shards]]
+id = "chat"
+log_level = "info"       # Optional: default info
+enable_otel = false      # Optional: default false
+path = "shards/chat/" # Optional path override
+
+[gateway]
+log_level = "info"       # Optional: default info
+enable_otel = false      # Optional: default false
+
+[registry]
+log_level = "info"       # Optional: default info
+enable_otel = false      # Optional: default false

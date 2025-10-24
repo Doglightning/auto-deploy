@@ -1,9 +1,10 @@
 package system
 
 import (
-	"github.com/argus-labs/monorepo/pkg/cardinal"
 	"rampage/component"
 	"rampage/event"
+
+	"github.com/argus-labs/world-engine/pkg/cardinal"
 )
 
 type CreatePlayerCommand struct {
@@ -25,7 +26,7 @@ type CreatePlayerSystemState struct {
 func CreatePlayerSystem(state *CreatePlayerSystemState) error {
 	for msg := range state.CreatePlayerCommands.Iter() {
 		id, err := state.Players.Create(
-			component.PlayerTag{Nickname: msg.Nickname},
+			component.PlayerTag{Nickname: msg.Payload().Nickname},
 			component.Health{HP: 100},
 		)
 		if err != nil {
@@ -34,8 +35,8 @@ func CreatePlayerSystem(state *CreatePlayerSystemState) error {
 			continue
 		}
 
-		state.NewPlayerEvents.Emit(event.NewPlayer{Nickname: msg.Nickname})
-		state.Logger().Info().Uint32("entity", uint32(id)).Msgf("Created player %s", msg.Nickname)
+		state.NewPlayerEvents.Emit(event.NewPlayer{Nickname: msg.Payload().Nickname})
+		state.Logger().Info().Uint32("entity", uint32(id)).Msgf("Created player %s", msg.Payload().Nickname)
 	}
 	return nil
 }
